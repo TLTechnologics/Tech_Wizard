@@ -1,8 +1,5 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { MapPin, Mail, Phone, Share2, Instagram, Navigation } from 'lucide-react';
-import { useSectionChoreography } from '../../hooks/useSectionChoreography';
-import { ScrollTextReveal } from '../common/ScrollTextReveal';
-import { SCROLL_MOTION } from '../../lib/gsap';
 
 interface ContactSectionProps {
   collegeName?: string;
@@ -21,8 +18,6 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   instagramUrl = 'https://instagram.com/techwizard2027',
   mapUrl = 'https://share.google/wWJlNwjeWMOJeZC5y',
 }) => {
-  const sectionRef = useRef<HTMLElement | null>(null);
-  useSectionChoreography(sectionRef);
   const shareWhatsApp = () => {
     const text = encodeURIComponent(
       `Check out TECH WIZARD 2027 — Where Ideas Meet Innovation (18–24 January 2027)!\n${window.location.origin}`
@@ -34,11 +29,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   const displayAddress = address && address.includes('Vastrapur') ? address : fullAddress;
 
   return (
-    <section ref={sectionRef} className="relative py-14 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-[#1F160C] via-[#2E2010] to-[#181109] overflow-hidden text-white" id="contact">
+    <section className="relative py-14 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-[#1F160C] via-[#2E2010] to-[#181109] overflow-hidden text-white" id="contact">
       {/* Warm Hufflepuff Amber & Parchment Starlight Glow */}
       <div 
-        data-parallax-y="22"
-        className="absolute inset-0 pointer-events-none opacity-30 z-0 will-change-transform"
+        className="absolute inset-0 pointer-events-none opacity-30 z-0"
         style={{
           background: 'radial-gradient(ellipse at 80% 20%, rgba(245, 158, 11, 0.3) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(214, 179, 106, 0.25) 0%, transparent 65%)',
         }}
@@ -58,30 +52,21 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="mb-8 sm:mb-10">
-          <div data-reveal data-reveal-bottom className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-sm border-2 border-[#D6B36A]/60 bg-[#2D1D0E] shadow-[2px_2px_0px_#0C0804] mb-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-sm border-2 border-[#D6B36A]/60 bg-[#2D1D0E] shadow-[2px_2px_0px_#0C0804] mb-3">
             <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-[0_0_8px_#FBBF24]" />
             <span className="font-mono text-[11px] sm:text-xs text-[#FDE68A] tracking-widest uppercase font-bold">
               ✦ HUFFLEPUFF OWL POST DISPATCH // COMMUNICATIONS ✦
             </span>
           </div>
 
-          <ScrollTextReveal
-            as="h2"
-            start={SCROLL_MOTION.startBottom}
-            className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight"
-            segments={[
-              { text: 'Connect With The' },
-              {
-                text: 'Council.',
-                className: 'text-[#FBBF24] underline decoration-[#D6B36A] decoration-wavy decoration-2',
-              },
-            ]}
-          />
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight">
+            Connect With The <span className="text-[#FBBF24] underline decoration-[#D6B36A] decoration-wavy decoration-2">Council.</span>
+          </h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           {/* Main Direct Email Action */}
-          <div data-reveal data-reveal-bottom data-reveal-delay="0.04" className="lg:col-span-7 flex flex-col justify-between">
+          <div className="lg:col-span-7 flex flex-col justify-between">
             <div className="mb-4 p-5 sm:p-6 rounded-sm bg-[#2B1D10] border-2 border-[#D6B36A] shadow-[4px_4px_0px_#0C0804] relative overflow-hidden">
               {/* Burgundy Wax Seal Ribbon */}
               <div
@@ -142,8 +127,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
           </div>
 
           {/* Right Column: Address and Phone Postal Placards */}
-          <div data-stagger-group data-stagger-step="0.12" data-stagger-start="top 95%" className="lg:col-span-5 space-y-4">
-            <div data-stagger-item className="p-4 sm:p-5 rounded-sm bg-[#281A0E] border-2 border-[#D6B36A]/70 shadow-[3.5px_3.5px_0px_#0C0804]">
+          <div className="lg:col-span-5 space-y-4">
+            <div className="p-4 sm:p-5 rounded-sm bg-[#281A0E] border-2 border-[#D6B36A]/70 shadow-[3.5px_3.5px_0px_#0C0804]">
               <div className="flex items-start gap-3.5">
                 <div className="p-2.5 rounded-sm border border-[#D6B36A] bg-[#1A1108] text-[#FDE68A] flex-shrink-0 shadow-[1px_1px_0px_#0C0804]">
                   <MapPin className="w-4 h-4" />
@@ -162,7 +147,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
               </div>
             </div>
 
-            <div data-stagger-item className="p-4 sm:p-5 rounded-sm bg-[#281A0E] border-2 border-[#D6B36A]/70 shadow-[3.5px_3.5px_0px_#0C0804]">
+            <div className="p-4 sm:p-5 rounded-sm bg-[#281A0E] border-2 border-[#D6B36A]/70 shadow-[3.5px_3.5px_0px_#0C0804]">
               <div className="flex items-start gap-3.5">
                 <div className="p-2.5 rounded-sm border border-[#D6B36A] bg-[#1A1108] text-[#FDE68A] flex-shrink-0 shadow-[1px_1px_0px_#0C0804]">
                   <Phone className="w-4 h-4" />

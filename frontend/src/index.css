@@ -480,8 +480,7 @@ header {
   right: 0;
   height: 3px;
   background: linear-gradient(90deg, #D6B36A, #762E42, #F3D58A);
-  transform-origin: left center;
-  will-change: transform;
+  transition: width 0.1s ease-out;
   z-index: 52;
 }
 
@@ -689,10 +688,6 @@ section {
     0 16px 36px rgba(0, 0, 0, 0.65),
     0 0 20px rgba(214, 179, 106, 0.25),
     5px 5px 0px #D6B36A;
-}
-
-.plate:hover .art svg {
-  transform: scale(1.06);
 }
 
 .art {

@@ -1,9 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Clock, MapPin, ArrowRight, Compass, Footprints } from 'lucide-react';
-import { useSectionChoreography } from '../../hooks/useSectionChoreography';
-import { useSmoothScroll } from '../../context/SmoothScrollContext';
-import { ScrollTextReveal } from '../common/ScrollTextReveal';
 
 interface SessionItem {
   time: string;
@@ -111,19 +108,14 @@ const getTagBadgeStyle = (tag: string) => {
 
 export const ScheduleSection: React.FC = () => {
   const [activeDayIndex, setActiveDayIndex] = useState(0);
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const { refreshScroll } = useSmoothScroll();
-
-  useSectionChoreography(sectionRef);
 
   const activeDay = SCHEDULE_DATA[activeDayIndex];
 
   return (
-    <section ref={sectionRef} className="relative py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-[#1C1610] via-[#261E16] to-[#18120C] overflow-hidden text-white" id="schedule">
+    <section className="relative py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-[#1C1610] via-[#261E16] to-[#18120C] overflow-hidden text-white" id="schedule">
       {/* Marauder's Map Aged Parchment Floorplan Lines & Ink Footprints */}
       <div 
-        data-parallax-y="22"
-        className="absolute inset-0 pointer-events-none opacity-[0.08] z-0 will-change-transform"
+        className="absolute inset-0 pointer-events-none opacity-[0.08] z-0"
         style={{
           backgroundImage:
             'radial-gradient(#D6B36A 1.5px, transparent 1.5px), linear-gradient(to right, #D6B36A 1px, transparent 1px), linear-gradient(to bottom, #D6B36A 1px, transparent 1px)',
@@ -134,7 +126,7 @@ export const ScheduleSection: React.FC = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Marauder's Map Dedication Banner */}
-        <div data-reveal className="mb-8 p-4 sm:p-5 rounded-sm border-2 border-[#D6B36A] bg-gradient-to-r from-[#2C2117] via-[#382B1E] to-[#2C2117] shadow-[0_10px_30px_rgba(0,0,0,0.7)] flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+        <div className="mb-8 p-4 sm:p-5 rounded-sm border-2 border-[#D6B36A] bg-gradient-to-r from-[#2C2117] via-[#382B1E] to-[#2C2117] shadow-[0_10px_30px_rgba(0,0,0,0.7)] flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-sm border border-[#D6B36A] bg-[#1A120B] text-[#F3D58A] shadow-[0_0_12px_rgba(214,179,106,0.3)]">
               <Compass className="w-5 h-5 animate-spin" style={{ animationDuration: '24s' }} />
@@ -155,37 +147,25 @@ export const ScheduleSection: React.FC = () => {
 
         {/* Section Main Title */}
         <div className="mb-8 sm:mb-10">
-          <ScrollTextReveal
-            as="h2"
-            className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight"
-            segments={[
-              { text: 'Seven Days,' },
-              {
-                text: 'One Enchanted Campus.',
-                className: 'text-transparent bg-clip-text bg-gradient-to-r from-[#D6B36A] via-[#F3D58A] to-[#D6B36A]',
-              },
-            ]}
-          />
-          <p data-reveal data-reveal-delay="0.1" className="font-mono text-xs sm:text-sm text-[#E2D5C0] mt-2">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight">
+            Seven Days, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D6B36A] via-[#F3D58A] to-[#D6B36A]">One Enchanted Campus.</span>
+          </h2>
+          <p className="font-mono text-xs sm:text-sm text-[#E2D5C0] mt-2">
             Select a date below to reveal scheduled sessions, venues, and moving footprints.
           </p>
         </div>
 
         {/* 7 Days Tab List Ribbon: Map Date Tabs */}
-        <div data-stagger-group data-stagger-step="0.05" className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 sm:gap-3.5 mb-8" role="tablist" aria-label="Festival days">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 sm:gap-3.5 mb-8" role="tablist" aria-label="Festival days">
           {SCHEDULE_DATA.map((day, idx) => {
             const isSelected = activeDayIndex === idx;
             return (
               <button
                 key={day.dayNumber}
-                data-stagger-item
                 type="button"
                 role="tab"
                 aria-selected={isSelected}
-                onClick={() => {
-                  setActiveDayIndex(idx);
-                  window.setTimeout(() => refreshScroll(), 320);
-                }}
+                onClick={() => setActiveDayIndex(idx)}
                 className={`p-3 sm:p-4 rounded-sm font-mono text-left transition-all duration-300 border-2 flex flex-col justify-between cursor-pointer relative overflow-hidden ${
                   isSelected
                     ? 'bg-gradient-to-br from-[#D6B36A] to-[#F3D58A] text-[#100D18] border-[#FFE27A] shadow-[0_0_24px_rgba(214,179,106,0.6),3.5px_3.5px_0px_#0A0812] -translate-y-1'
@@ -208,7 +188,7 @@ export const ScheduleSection: React.FC = () => {
         </div>
 
         {/* Sessions Panel for the Active Day: Marauder's Parchment Dossier */}
-        <div data-reveal className="rounded-sm border-2 border-[#D6B36A] bg-gradient-to-b from-[#2A2016] to-[#1C150E] p-6 sm:p-8 shadow-[0_16px_50px_rgba(0,0,0,0.7),0_0_24px_rgba(214,179,106,0.2)] relative overflow-hidden" role="tabpanel">
+        <div className="rounded-sm border-2 border-[#D6B36A] bg-gradient-to-b from-[#2A2016] to-[#1C150E] p-6 sm:p-8 shadow-[0_16px_50px_rgba(0,0,0,0.7),0_0_24px_rgba(214,179,106,0.2)] relative overflow-hidden" role="tabpanel">
           {/* Wax Seal Ribbon in corner */}
           <div
             className="absolute top-0 right-10 px-4 py-1 bg-gradient-to-r from-[#762E42] to-[#4A1525] border-x border-b border-[#D6B36A] shadow-[0_2px_8px_rgba(0,0,0,0.6)] z-10 flex items-center gap-1.5"
@@ -278,7 +258,7 @@ export const ScheduleSection: React.FC = () => {
         </div>
 
         {/* Bottom Schedule Sub-note: Mischief Managed */}
-        <div data-reveal className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-body text-xs text-[#E2D5C0] border-t border-[#D6B36A]/25 pt-5">
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-body text-xs text-[#E2D5C0] border-t border-[#D6B36A]/25 pt-5">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#D6B36A] shadow-[0_0_8px_#D6B36A]" />
             <span className="font-bold text-[#F4EBDD] font-cinzel tracking-wide">All tracks hosted on LJCCA Main Campus · Mischief Managed.</span>

@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Calendar, MapPin, Sparkles, ChevronDown } from 'lucide-react';
 import { MagneticButton } from '../common/MagneticButton';
-import { useSmoothScroll } from '../../context/SmoothScrollContext';
-import { gsap, MM_CONDITIONS } from '../../lib/gsap';
 
 interface HeroProps {
   onOpenSubmission?: () => void;
@@ -11,53 +9,6 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = () => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const { scrollTo } = useSmoothScroll();
-
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-
-    const mm = gsap.matchMedia();
-
-    mm.add(MM_CONDITIONS.desktop, () => {
-      const glow = el.querySelector('[data-hero-glow]');
-      const moon = el.querySelector('[data-hero-moon]');
-      const castle = el.querySelector('[data-hero-castle]');
-      const center = el.querySelector('[data-hero-center]');
-
-      if (glow) {
-        gsap.to(glow, {
-          yPercent: 18,
-          ease: 'none',
-          scrollTrigger: { trigger: el, start: 'top top', end: 'bottom top', scrub: 1.2 },
-        });
-      }
-      if (moon) {
-        gsap.to(moon, {
-          y: 70,
-          ease: 'none',
-          scrollTrigger: { trigger: el, start: 'top top', end: 'bottom top', scrub: 1.2 },
-        });
-      }
-      if (castle) {
-        gsap.to(castle, {
-          yPercent: 12,
-          ease: 'none',
-          scrollTrigger: { trigger: el, start: 'top top', end: 'bottom top', scrub: 1.1 },
-        });
-      }
-      if (center) {
-        gsap.to(center, {
-          y: -36,
-          ease: 'none',
-          scrollTrigger: { trigger: el, start: 'top top', end: 'bottom top', scrub: 1 },
-        });
-      }
-    });
-
-    return () => mm.revert();
-  }, []);
 
   useEffect(() => {
     const target = new Date(2027, 0, 18, 9, 0, 0).getTime();
@@ -92,7 +43,6 @@ export const Hero: React.FC<HeroProps> = () => {
 
   return (
     <section
-      ref={sectionRef}
       className="relative min-h-[92vh] flex flex-col justify-between items-center pt-24 pb-10 sm:pt-28 sm:pb-12 px-4 sm:px-6 md:px-8 overflow-hidden bg-[#0A0714]"
       id="top"
     >
@@ -101,8 +51,7 @@ export const Hero: React.FC<HeroProps> = () => {
 
       {/* 2. Moonlit Atmospheric Glow & Drifting Fog */}
       <div 
-        data-hero-glow
-        className="absolute -top-10 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] pointer-events-none rounded-full blur-[140px] opacity-35 z-0 will-change-transform"
+        className="absolute -top-10 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] pointer-events-none rounded-full blur-[140px] opacity-35 z-0"
         style={{
           background: 'radial-gradient(circle, rgba(214, 179, 106, 0.25) 0%, rgba(21, 24, 42, 0.6) 55%, transparent 80%)',
         }}
@@ -110,13 +59,13 @@ export const Hero: React.FC<HeroProps> = () => {
       />
 
       {/* Crescent Moon in the High Sky */}
-      <div data-hero-moon className="absolute top-16 right-[15%] w-24 h-24 pointer-events-none z-0 hidden md:block will-change-transform">
+      <div className="absolute top-16 right-[15%] w-24 h-24 pointer-events-none z-0 hidden md:block">
         <div className="absolute inset-0 rounded-full bg-[#FFF9E6] shadow-[0_0_50px_#FFE79A,0_0_100px_rgba(214,179,106,0.5)] opacity-85" />
         <div className="absolute top-1 left-2 w-20 h-20 rounded-full bg-[#080512] opacity-90" />
       </div>
 
       {/* 3. Layered Silhouette of Hogwarts Castle with Illuminated Windows */}
-      <div data-hero-castle className="absolute bottom-0 left-0 right-0 h-64 sm:h-80 md:h-96 pointer-events-none z-[1] flex items-end justify-center overflow-hidden opacity-90 will-change-transform">
+      <div className="absolute bottom-0 left-0 right-0 h-64 sm:h-80 md:h-96 pointer-events-none z-[1] flex items-end justify-center overflow-hidden opacity-90">
         <svg 
           viewBox="0 0 1600 360" 
           fill="none" 
@@ -253,7 +202,7 @@ export const Hero: React.FC<HeroProps> = () => {
       </div>
 
       {/* 7. CENTERPIECE: MAJESTIC HOGWARTS TITLE COMPOSITION */}
-      <div data-hero-center className="relative z-10 w-full max-w-4xl mx-auto my-auto flex flex-col items-center text-center px-4 py-6 sm:py-8 will-change-transform">
+      <div className="relative z-10 w-full max-w-4xl mx-auto my-auto flex flex-col items-center text-center px-4 py-6 sm:py-8">
         {/* Curated Hogwarts Seal Badge */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -386,10 +335,6 @@ export const Hero: React.FC<HeroProps> = () => {
         {/* Scroll Indicator */}
         <a
           href="#about"
-          onClick={(e) => {
-            e.preventDefault();
-            scrollTo('#about');
-          }}
           className="hidden md:inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#F4EBDD] hover:text-[#F3D58A] transition-colors"
         >
           <span>DESCEND TO GREAT HALL</span>

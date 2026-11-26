@@ -1,12 +1,8 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { Terminal, Code2, Cpu, HeartHandshake, Award, CheckCircle2, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useSectionChoreography } from '../../hooks/useSectionChoreography';
-import { ScrollTextReveal } from '../common/ScrollTextReveal';
 
 export const AboutSection: React.FC = () => {
-  const sectionRef = useRef<HTMLElement | null>(null);
-  useSectionChoreography(sectionRef);
   const metrics = [
     { value: '07', label: 'Days of Magic', tag: 'CHRONOLOGY', desc: 'Continuous innovation sprint across high-tech Hogwarts laboratories', color: '#60A5FA', bg: '#0F1A30', house: 'RAVENCLAW' },
     { value: '24', label: 'Workshops & Spells', tag: 'CURRICULUM', desc: 'Faculty, industry wizards & alumni led practical deep dives', color: '#F3D58A', bg: '#181E32', house: 'BRONZE' },
@@ -88,11 +84,10 @@ export const AboutSection: React.FC = () => {
   ];
 
   return (
-    <section ref={sectionRef} className="relative py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-[#080E1B] via-[#0E172B] to-[#0A1222] overflow-hidden text-white" id="about">
+    <section className="relative py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-[#080E1B] via-[#0E172B] to-[#0A1222] overflow-hidden text-white" id="about">
       {/* Ravenclaw Starlight Atmosphere & Stained Glass Blue Aura */}
       <div 
-        data-parallax-y="28"
-        className="absolute inset-0 pointer-events-none opacity-40 z-0 will-change-transform"
+        className="absolute inset-0 pointer-events-none opacity-40 z-0"
         style={{
           background: 'radial-gradient(ellipse at 50% 15%, rgba(59, 130, 246, 0.25) 0%, rgba(29, 45, 80, 0.4) 50%, transparent 80%)',
         }}
@@ -100,7 +95,7 @@ export const AboutSection: React.FC = () => {
       />
 
       {/* Gothic Arches Silhouettes in Deep Royal Blue */}
-      <div data-parallax-y="-24" className="absolute inset-0 pointer-events-none opacity-20 z-0 flex items-start justify-around will-change-transform" aria-hidden="true">
+      <div className="absolute inset-0 pointer-events-none opacity-20 z-0 flex items-start justify-around" aria-hidden="true">
         <svg viewBox="0 0 1200 400" className="w-full h-full object-cover" fill="none">
           <path d="M 100 400 L 100 180 Q 200 60 300 180 L 300 400 M 450 400 L 450 180 Q 550 60 650 180 L 650 400 M 800 400 L 800 180 Q 900 60 1000 180 L 1000 400" stroke="#60A5FA" strokeWidth="1.5" strokeDasharray="4 6" />
         </svg>
@@ -124,36 +119,28 @@ export const AboutSection: React.FC = () => {
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Section Header: Ravenclaw Blue & Antique Bronze Theme */}
         <div className="mb-10 sm:mb-12">
-          <div data-reveal className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-sm border border-[#3B82F6]/60 bg-[#0F1B33]/90 backdrop-blur-sm shadow-[0_0_18px_rgba(59,130,246,0.3)] mb-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-sm border border-[#3B82F6]/60 bg-[#0F1B33]/90 backdrop-blur-sm shadow-[0_0_18px_rgba(59,130,246,0.3)] mb-3">
             <span className="w-2 h-2 rounded-full bg-[#60A5FA] shadow-[0_0_8px_#60A5FA]" />
             <span className="font-mono text-[11px] sm:text-xs text-[#93C5FD] tracking-[0.2em] uppercase font-bold">
               ✦ HOGWARTS GREAT HALL // RAVENCLAW ARCHIVES ✦
             </span>
           </div>
 
-          <ScrollTextReveal
-            as="h2"
-            className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight"
-            segments={[
-              { text: 'Where Ideas Meet' },
-              {
-                text: 'Wisdom & Innovation.',
-                className: 'text-transparent bg-clip-text bg-gradient-to-r from-[#93C5FD] via-[#60A5FA] to-[#D6B36A]',
-              },
-            ]}
-          />
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight">
+            Where Ideas Meet <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#93C5FD] via-[#60A5FA] to-[#D6B36A]">Wisdom &amp; Innovation.</span>
+          </h2>
         </div>
 
         {/* Narrative Split: Ravenclaw Blue Grimoire Composition */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start mb-12 sm:mb-14">
-          <div data-reveal data-reveal-delay="0.04" className="lg:col-span-6 bg-gradient-to-br from-[#101F38] to-[#0A1324] border-2 border-[#3B82F6]/70 p-6 sm:p-7 rounded-sm shadow-[0_12px_36px_rgba(0,0,0,0.8),0_0_24px_rgba(59,130,246,0.2)] relative overflow-hidden">
+          <div className="lg:col-span-6 bg-gradient-to-br from-[#101F38] to-[#0A1324] border-2 border-[#3B82F6]/70 p-6 sm:p-7 rounded-sm shadow-[0_12px_36px_rgba(0,0,0,0.8),0_0_24px_rgba(59,130,246,0.2)] relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-[#3B82F6]/10 rounded-bl-full pointer-events-none" />
             <p className="font-display text-lg sm:text-xl md:text-2xl font-extrabold text-[#F4EBDD] leading-snug">
               A week where students build, showcase, and test groundbreaking technology in front of mentors and peers who inspire them.
             </p>
           </div>
 
-          <div data-reveal data-reveal-delay="0.14" className="lg:col-span-6 flex flex-col gap-4 font-body text-sm sm:text-base text-[#CBD5E1] leading-relaxed bg-gradient-to-br from-[#0F1B33] to-[#08101E] border border-[#3B82F6]/40 p-6 sm:p-7 rounded-sm shadow-[0_12px_36px_rgba(0,0,0,0.8)]">
+          <div className="lg:col-span-6 flex flex-col gap-4 font-body text-sm sm:text-base text-[#CBD5E1] leading-relaxed bg-gradient-to-br from-[#0F1B33] to-[#08101E] border border-[#3B82F6]/40 p-6 sm:p-7 rounded-sm shadow-[0_12px_36px_rgba(0,0,0,0.8)]">
             <p>
               <strong className="text-[#93C5FD] font-bold">Tech Wizard 2027</strong> is our annual celebration of technical ingenuity. Styled after the storied halls of Hogwarts, each innovation receives a dedicated demonstration pedestal, high-speed power, and evaluators who examine deep into the code and architecture.
             </p>
@@ -164,11 +151,10 @@ export const AboutSection: React.FC = () => {
         </div>
 
         {/* 4 Interactive Statistics Telemetry Strip */}
-        <div data-stagger-group data-stagger-step="0.09" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-14 sm:mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-14 sm:mb-16">
           {metrics.map((m, idx) => (
             <div
               key={idx}
-              data-stagger-item
               className="p-5 rounded-sm border-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_25px_rgba(59,130,246,0.35)] relative overflow-hidden"
               style={{
                 backgroundColor: m.bg,
@@ -203,27 +189,24 @@ export const AboutSection: React.FC = () => {
         {/* 5 Core Festival Pillars Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8">
           <div>
-            <span data-reveal className="font-mono text-xs text-[#93C5FD] tracking-widest uppercase font-bold flex items-center gap-2">
+            <span className="font-mono text-xs text-[#93C5FD] tracking-widest uppercase font-bold flex items-center gap-2">
               <Sparkles className="w-3.5 h-3.5 text-[#60A5FA]" />
               FESTIVAL ARCHITECTURE // 5 CORE PILLARS
             </span>
-            <ScrollTextReveal
-              as="h3"
-              className="font-display text-2xl sm:text-3xl md:text-4xl font-black text-[#F4EBDD] mt-1 tracking-wide"
-              segments={[{ text: 'Engineered with Wizarding Precision.' }]}
-            />
+            <h3 className="font-display text-2xl sm:text-3xl md:text-4xl font-black text-[#F4EBDD] mt-1 tracking-wide">
+              Engineered with Wizarding Precision.
+            </h3>
           </div>
-          <span data-reveal data-reveal-delay="0.1" className="font-mono text-xs font-bold text-[#101A2E] px-3.5 py-1.5 bg-gradient-to-r from-[#93C5FD] to-[#60A5FA] border border-[#BFDBFE] shadow-[0_0_12px_rgba(59,130,246,0.3)] rounded-sm">
+          <span className="font-mono text-xs font-bold text-[#101A2E] px-3.5 py-1.5 bg-gradient-to-r from-[#93C5FD] to-[#60A5FA] border border-[#BFDBFE] shadow-[0_0_12px_rgba(59,130,246,0.3)] rounded-sm">
             LJCCA INNOVATION FRAMEWORK
           </span>
         </div>
 
         {/* 5 Core Pillars Grid: 4 House Banners + Archive */}
-        <div data-stagger-group data-stagger-step="0.1" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 sm:mb-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 sm:mb-14">
           {pillars.map((p) => (
             <div
               key={p.id}
-              data-stagger-item
               className="p-6 rounded-sm border-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(59,130,246,0.35)] flex flex-col justify-between relative overflow-hidden"
               style={{
                 background: p.houseColor,
@@ -277,7 +260,7 @@ export const AboutSection: React.FC = () => {
         </div>
 
         {/* Institutional Directive Banner: Wax Sealed Blue/Gold Plaque */}
-        <div data-reveal className="p-5 sm:p-6 rounded-sm border-2 border-[#3B82F6]/60 bg-gradient-to-r from-[#0C1A33] via-[#091529] to-[#0A1324] shadow-[0_12px_36px_rgba(0,0,0,0.8),0_0_20px_rgba(59,130,246,0.2)] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="p-5 sm:p-6 rounded-sm border-2 border-[#3B82F6]/60 bg-gradient-to-r from-[#0C1A33] via-[#091529] to-[#0A1324] shadow-[0_12px_36px_rgba(0,0,0,0.8),0_0_20px_rgba(59,130,246,0.2)] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <div className="w-10 h-10 rounded-full bg-[#1D4ED8] border-2 border-[#93C5FD] shadow-[0_0_12px_#3B82F6] flex items-center justify-center flex-shrink-0">
               <span className="font-display font-black text-xs text-[#BFDBFE]">TW</span>

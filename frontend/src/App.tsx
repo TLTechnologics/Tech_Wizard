@@ -21,6 +21,7 @@ import { AdminLoginModal } from './components/admin/AdminLoginModal';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { NotificationToast } from './components/layout/NotificationToast';
 import { TechnicalSeparator } from './components/common/TechnicalSeparator';
+import { ScrollReveal } from './components/common/ScrollReveal';
 import { CustomCursor } from './components/common/CustomCursor';
 import { TechLoaderOverlay } from './components/common/TechLoaderOverlay';
 import { FlyingBroomstickOverlay } from './components/common/FlyingBroomstickOverlay';
@@ -544,7 +545,9 @@ export const App: React.FC = () => {
         />
 
         {/* B. About */}
-        <AboutSection />
+        <ScrollReveal>
+          <AboutSection />
+        </ScrollReveal>
 
         <TechnicalSeparator
           label="CHALLENGES // GRYFFINDOR ARENA"
@@ -555,11 +558,13 @@ export const App: React.FC = () => {
         />
 
         {/* C. Events (Track Overview & 8 Events Program) */}
-        <EventsTimeline
-          events={events}
-          onSelectRegister={handleSelectRegister}
-          onSelectShowcase={handleSelectShowcase}
-        />
+        <ScrollReveal>
+          <EventsTimeline
+            events={events}
+            onSelectRegister={handleSelectRegister}
+            onSelectShowcase={handleSelectShowcase}
+          />
+        </ScrollReveal>
 
         <TechnicalSeparator
           label="DUNGEONS // SLYTHERIN POTIONS LAB"
@@ -570,10 +575,12 @@ export const App: React.FC = () => {
         />
 
         {/* C.2 Intensive Workshops & Hackathons */}
-        <WorkshopsHackathonsSection
-          events={events}
-          onRegister={handleSelectRegister}
-        />
+        <ScrollReveal>
+          <WorkshopsHackathonsSection
+            events={events}
+            onRegister={handleSelectRegister}
+          />
+        </ScrollReveal>
 
         <TechnicalSeparator
           label="CHAMBER // RAVENCLAW INVENTIONS"
@@ -584,7 +591,9 @@ export const App: React.FC = () => {
         />
 
         {/* D. Tech Showcase */}
-        <TechShowcaseSection projects={projects} />
+        <ScrollReveal>
+          <TechShowcaseSection projects={projects} />
+        </ScrollReveal>
 
         <TechnicalSeparator
           label="PARCHMENT // MARAUDER'S MAP"
@@ -595,7 +604,9 @@ export const App: React.FC = () => {
         />
 
         {/* E. 7-Day Schedule with Days Tabs & Session Rows */}
-        <ScheduleSection />
+        <ScrollReveal>
+          <ScheduleSection />
+        </ScrollReveal>
 
         <TechnicalSeparator
           label="ADMISSION // HOGWARTS PASSES"
@@ -606,15 +617,17 @@ export const App: React.FC = () => {
         />
 
         {/* F. Registration Section */}
-        <RegistrationSection
-          events={events}
-          preselectedEventId={preselectedEventId}
-          ourCollegeName={settings.our_college_name}
-          onOpenSubmission={(reg) => {
-            setInitialRegForSubmission(reg || null);
-            setIsSubmissionOpen(true);
-          }}
-        />
+        <ScrollReveal>
+          <RegistrationSection
+            events={events}
+            preselectedEventId={preselectedEventId}
+            ourCollegeName={settings.our_college_name}
+            onOpenSubmission={(reg) => {
+              setInitialRegForSubmission(reg || null);
+              setIsSubmissionOpen(true);
+            }}
+          />
+        </ScrollReveal>
 
         <TechnicalSeparator
           label="GRAND STAIRCASE // ROYAL PORTRAITS"
@@ -625,7 +638,9 @@ export const App: React.FC = () => {
         />
 
         {/* G. Gallery */}
-        <GallerySection items={galleryItems} />
+        <ScrollReveal>
+          <GallerySection items={galleryItems} />
+        </ScrollReveal>
 
         <TechnicalSeparator
           label="RESTRICTED // EMERALD ARCHIVE"
@@ -636,7 +651,9 @@ export const App: React.FC = () => {
         />
 
         {/* H. FAQ */}
-        <FAQSection faqs={faqs} />
+        <ScrollReveal>
+          <FAQSection faqs={faqs} />
+        </ScrollReveal>
 
         <TechnicalSeparator
           label="COMMUNICATIONS // OWL POST"
@@ -647,13 +664,15 @@ export const App: React.FC = () => {
         />
 
         {/* I. Contact */}
-        <ContactSection
-          collegeName={settings.our_college_name}
-          officialEmail={settings.official_email}
-          phone={settings.phone}
-          address={settings.address}
-          instagramUrl={settings.instagram_url}
-        />
+        <ScrollReveal>
+          <ContactSection
+            collegeName={settings.our_college_name}
+            officialEmail={settings.official_email}
+            phone={settings.phone}
+            address={settings.address}
+            instagramUrl={settings.instagram_url}
+          />
+        </ScrollReveal>
       </main>
 
       {/* Footer */}
