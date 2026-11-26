@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from './services/api';
 import { EventItem, ProjectRecord, GalleryItem, FAQItem, FestivalSettings, RegistrationRecord } from './types';
 import { useAuth } from './context/AuthContext';
+import { useSmoothScroll } from './context/SmoothScrollContext';
 import { TechBackground } from './components/home/TechBackground';
 import { Navbar } from './components/layout/Navbar';
 import { Hero } from './components/home/Hero';
@@ -20,7 +21,6 @@ import { AdminLoginModal } from './components/admin/AdminLoginModal';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { NotificationToast } from './components/layout/NotificationToast';
 import { TechnicalSeparator } from './components/common/TechnicalSeparator';
-import { ScrollReveal } from './components/common/ScrollReveal';
 import { CustomCursor } from './components/common/CustomCursor';
 import { TechLoaderOverlay } from './components/common/TechLoaderOverlay';
 import { FlyingBroomstickOverlay } from './components/common/FlyingBroomstickOverlay';
@@ -409,6 +409,7 @@ const DEFAULT_PROJECTS: ProjectRecord[] = [
 
 export const App: React.FC = () => {
   const { isAdmin } = useAuth();
+  const { scrollTo, stopScroll, startScroll, refreshScroll } = useSmoothScroll();
   const [events, setEvents] = useState<EventItem[]>(DEFAULT_EVENTS);
   const [projects, setProjects] = useState<ProjectRecord[]>(DEFAULT_PROJECTS);
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(DEFAULT_GALLERY);
@@ -421,6 +422,18 @@ export const App: React.FC = () => {
   const [isSubmissionOpen, setIsSubmissionOpen] = useState(false);
   const [initialRegForSubmission, setInitialRegForSubmission] = useState<RegistrationRecord | null>(null);
   const [preselectedEventId, setPreselectedEventId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isLoginOpen || isDashboardOpen || isSubmissionOpen) {
+      stopScroll();
+    } else {
+      startScroll();
+    }
+  }, [isLoginOpen, isDashboardOpen, isSubmissionOpen, stopScroll, startScroll]);
+
+  useEffect(() => {
+    refreshScroll();
+  }, [events, projects, galleryItems, faqs, refreshScroll]);
 
   const loadData = async () => {
     try {
@@ -490,21 +503,15 @@ export const App: React.FC = () => {
 
   const handleSelectRegister = (eventId: string) => {
     setPreselectedEventId(eventId);
-    const elem = document.getElementById('register');
-    if (elem) {
-      elem.scrollIntoView({ behavior: 'smooth' });
-    }
+    scrollTo('#register');
   };
 
   const handleSelectShowcase = () => {
-    const elem = document.getElementById('showcase');
-    if (elem) {
-      elem.scrollIntoView({ behavior: 'smooth' });
-    }
+    scrollTo('#showcase');
   };
 
   return (
-    <div className="app-container" style={{ position: 'relative', overflowX: 'hidden' }}>
+    <div className="app-container" style={{ position: 'relative', overflowX: 'clip' }}>
       {/* Cybernetic Boot Sequence Loader */}
       <TechLoaderOverlay />
 
@@ -537,9 +544,7 @@ export const App: React.FC = () => {
         />
 
         {/* B. About */}
-        <ScrollReveal>
-          <AboutSection />
-        </ScrollReveal>
+        <AboutSection />
 
         <TechnicalSeparator
           label="CHALLENGES // GRYFFINDOR ARENA"
@@ -550,13 +555,11 @@ export const App: React.FC = () => {
         />
 
         {/* C. Events (Track Overview & 8 Events Program) */}
-        <ScrollReveal>
-          <EventsTimeline
-            events={events}
-            onSelectRegister={handleSelectRegister}
-            onSelectShowcase={handleSelectShowcase}
-          />
-        </ScrollReveal>
+        <EventsTimeline
+          events={events}
+          onSelectRegister={handleSelectRegister}
+          onSelectShowcase={handleSelectShowcase}
+        />
 
         <TechnicalSeparator
           label="DUNGEONS // SLYTHERIN POTIONS LAB"
@@ -567,12 +570,10 @@ export const App: React.FC = () => {
         />
 
         {/* C.2 Intensive Workshops & Hackathons */}
-        <ScrollReveal>
-          <WorkshopsHackathonsSection
-            events={events}
-            onRegister={handleSelectRegister}
-          />
-        </ScrollReveal>
+        <WorkshopsHackathonsSection
+          events={events}
+          onRegister={handleSelectRegister}
+        />
 
         <TechnicalSeparator
           label="CHAMBER // RAVENCLAW INVENTIONS"
@@ -583,9 +584,7 @@ export const App: React.FC = () => {
         />
 
         {/* D. Tech Showcase */}
-        <ScrollReveal>
-          <TechShowcaseSection projects={projects} />
-        </ScrollReveal>
+        <TechShowcaseSection projects={projects} />
 
         <TechnicalSeparator
           label="PARCHMENT // MARAUDER'S MAP"
@@ -596,9 +595,7 @@ export const App: React.FC = () => {
         />
 
         {/* E. 7-Day Schedule with Days Tabs & Session Rows */}
-        <ScrollReveal>
-          <ScheduleSection />
-        </ScrollReveal>
+        <ScheduleSection />
 
         <TechnicalSeparator
           label="ADMISSION // HOGWARTS PASSES"
@@ -609,17 +606,15 @@ export const App: React.FC = () => {
         />
 
         {/* F. Registration Section */}
-        <ScrollReveal>
-          <RegistrationSection
-            events={events}
-            preselectedEventId={preselectedEventId}
-            ourCollegeName={settings.our_college_name}
-            onOpenSubmission={(reg) => {
-              setInitialRegForSubmission(reg || null);
-              setIsSubmissionOpen(true);
-            }}
-          />
-        </ScrollReveal>
+        <RegistrationSection
+          events={events}
+          preselectedEventId={preselectedEventId}
+          ourCollegeName={settings.our_college_name}
+          onOpenSubmission={(reg) => {
+            setInitialRegForSubmission(reg || null);
+            setIsSubmissionOpen(true);
+          }}
+        />
 
         <TechnicalSeparator
           label="GRAND STAIRCASE // ROYAL PORTRAITS"
@@ -630,9 +625,7 @@ export const App: React.FC = () => {
         />
 
         {/* G. Gallery */}
-        <ScrollReveal>
-          <GallerySection items={galleryItems} />
-        </ScrollReveal>
+        <GallerySection items={galleryItems} />
 
         <TechnicalSeparator
           label="RESTRICTED // EMERALD ARCHIVE"
@@ -643,9 +636,7 @@ export const App: React.FC = () => {
         />
 
         {/* H. FAQ */}
-        <ScrollReveal>
-          <FAQSection faqs={faqs} />
-        </ScrollReveal>
+        <FAQSection faqs={faqs} />
 
         <TechnicalSeparator
           label="COMMUNICATIONS // OWL POST"
@@ -656,15 +647,13 @@ export const App: React.FC = () => {
         />
 
         {/* I. Contact */}
-        <ScrollReveal>
-          <ContactSection
-            collegeName={settings.our_college_name}
-            officialEmail={settings.official_email}
-            phone={settings.phone}
-            address={settings.address}
-            instagramUrl={settings.instagram_url}
-          />
-        </ScrollReveal>
+        <ContactSection
+          collegeName={settings.our_college_name}
+          officialEmail={settings.official_email}
+          phone={settings.phone}
+          address={settings.address}
+          instagramUrl={settings.instagram_url}
+        />
       </main>
 
       {/* Footer */}

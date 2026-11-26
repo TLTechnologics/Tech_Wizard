@@ -39,7 +39,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0B0912]/80 backdrop-blur-md">
+      <div data-lenis-prevent className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0B0912]/80 backdrop-blur-md">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}

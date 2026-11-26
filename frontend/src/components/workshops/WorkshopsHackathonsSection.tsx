@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Flame, Users, Clock, MapPin, ChevronDown, ChevronUp, ArrowUpRight, ShieldAlert, Sparkles } from 'lucide-react';
+import { Terminal, Flame, Users, Clock, MapPin, ChevronDown, ChevronUp, ArrowUpRight, ShieldAlert } from 'lucide-react';
 import { EventItem } from '../../types';
+import { useSectionChoreography } from '../../hooks/useSectionChoreography';
+import { useSmoothScroll } from '../../context/SmoothScrollContext';
+import { ScrollTextReveal } from '../common/ScrollTextReveal';
 
 interface WorkshopsHackathonsSectionProps {
   events: EventItem[];
@@ -13,6 +16,8 @@ export const WorkshopsHackathonsSection: React.FC<WorkshopsHackathonsSectionProp
   onRegister,
 }) => {
   const [expandedId, setExpandedId] = useState<string | null>('bhavesh-workshop');
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const { refreshScroll } = useSmoothScroll();
 
   const targetIds = [
     'bhavesh-workshop',
@@ -26,8 +31,11 @@ export const WorkshopsHackathonsSection: React.FC<WorkshopsHackathonsSectionProp
     .map((id) => events.find((e) => e.id === id))
     .filter((e): e is EventItem => Boolean(e));
 
+  useSectionChoreography(sectionRef, { refreshKey: sessions.length });
+
   const toggleExpand = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
+    window.setTimeout(() => refreshScroll(), 380);
   };
 
   const getAccentDetails = (event: EventItem) => {
@@ -59,10 +67,11 @@ export const WorkshopsHackathonsSection: React.FC<WorkshopsHackathonsSectionProp
   };
 
   return (
-    <section id="workshops" className="relative py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-[#0A1A12] via-[#102B1E] to-[#08150E] overflow-hidden text-white">
+    <section ref={sectionRef} id="workshops" className="relative py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-[#0A1A12] via-[#102B1E] to-[#08150E] overflow-hidden text-white">
       {/* Slytherin Potions Laboratory Glowing Emerald Mist & Dungeon Shelves */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-40 z-0"
+        data-parallax-y="24"
+        className="absolute inset-0 pointer-events-none opacity-40 z-0 will-change-transform"
         style={{
           background: 'radial-gradient(ellipse at 25% 25%, rgba(46, 196, 182, 0.25) 0%, transparent 60%), radial-gradient(ellipse at 80% 70%, rgba(30, 80, 55, 0.4) 0%, transparent 65%)',
         }}
@@ -99,23 +108,31 @@ export const WorkshopsHackathonsSection: React.FC<WorkshopsHackathonsSectionProp
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-12 pb-6 border-b border-dashed border-[#2D6A53]/50 gap-6">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-sm border border-[#74C69D]/60 bg-[#0C2419] shadow-[0_0_15px_rgba(116,198,157,0.25)] mb-3">
+            <div data-reveal className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-sm border border-[#74C69D]/60 bg-[#0C2419] shadow-[0_0_15px_rgba(116,198,157,0.25)] mb-3">
               <span className="w-2 h-2 rounded-full bg-[#74C69D] shadow-[0_0_8px_#74C69D]" />
               <span className="font-mono text-[11px] sm:text-xs text-[#A7F3D0] tracking-[0.2em] uppercase font-bold">
                 ✦ SLYTHERIN POTIONS CLASSROOM // DUNGEON LABS ✦
               </span>
             </div>
 
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight">
-              Workshops &amp; <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#74C69D] via-[#A7F3D0] to-[#D6B36A]">Potions Sprints.</span>
-            </h2>
+            <ScrollTextReveal
+              as="h2"
+              className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight"
+              segments={[
+                { text: 'Workshops &' },
+                {
+                  text: 'Potions Sprints.',
+                  className: 'text-transparent bg-clip-text bg-gradient-to-r from-[#74C69D] via-[#A7F3D0] to-[#D6B36A]',
+                },
+              ]}
+            />
 
-            <p className="font-body text-xs sm:text-sm text-[#B8D8C9] mt-2 max-w-2xl leading-relaxed font-normal">
+            <p data-reveal data-reveal-delay="0.12" className="font-body text-xs sm:text-sm text-[#B8D8C9] mt-2 max-w-2xl leading-relaxed font-normal">
               Enter the emerald-lit dungeon chambers. Hands-on systems programming, embedded architectures, rapid Triwizard sprint prototypes, and our dedicated parent AI literacy track.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 font-mono text-xs">
+          <div data-reveal data-reveal-delay="0.16" className="flex flex-wrap items-center gap-3 font-mono text-xs">
             <span className="flex items-center gap-2 text-[#F4EBDD] font-bold bg-[#0D261B] px-3.5 py-1.5 rounded-sm border border-[#2D6A53] shadow-[0_0_12px_rgba(116,198,157,0.2)]">
               <span className="w-2 h-2 bg-[#74C69D] rounded-full shadow-[0_0_6px_#74C69D]" />
               College Exclusive (LJCCA)
@@ -128,7 +145,7 @@ export const WorkshopsHackathonsSection: React.FC<WorkshopsHackathonsSectionProp
         </div>
 
         {/* Accordion Sessions List */}
-        <div className="space-y-4">
+        <div data-stagger-group data-stagger-step="0.09" className="space-y-4">
           {sessions.map((event) => {
             const isExpanded = expandedId === event.id;
             const details = getAccentDetails(event);
@@ -136,6 +153,7 @@ export const WorkshopsHackathonsSection: React.FC<WorkshopsHackathonsSectionProp
             return (
               <div
                 key={event.id}
+                data-stagger-item
                 className={`rounded-sm border-2 transition-all duration-300 overflow-hidden ${
                   isExpanded
                     ? 'border-[#74C69D] bg-[#0E281D] shadow-[0_12px_36px_rgba(0,0,0,0.7),0_0_24px_rgba(116,198,157,0.25)]'

@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GalleryItem } from '../../types';
 import { X, ZoomIn, Sparkles } from 'lucide-react';
+import { useSectionChoreography } from '../../hooks/useSectionChoreography';
+import { useSmoothScroll } from '../../context/SmoothScrollContext';
+import { ScrollTextReveal } from '../common/ScrollTextReveal';
+import { gsap, MM_CONDITIONS, SCROLL_MOTION } from '../../lib/gsap';
 
 interface GallerySectionProps {
   items: GalleryItem[];
@@ -10,6 +14,51 @@ interface GallerySectionProps {
 export const GallerySection: React.FC<GallerySectionProps> = ({ items }) => {
   const [filter, setFilter] = useState<string>('all');
   const [activeImage, setActiveImage] = useState<GalleryItem | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const gridRef = useRef<HTMLDivElement | null>(null);
+  const hasMountedFilterRef = useRef(false);
+  const { stopScroll, startScroll, refreshScroll } = useSmoothScroll();
+
+  useSectionChoreography(sectionRef, { refreshKey: items.length });
+
+  useEffect(() => {
+    if (activeImage) {
+      stopScroll();
+    } else {
+      startScroll();
+    }
+  }, [activeImage, stopScroll, startScroll]);
+
+  useEffect(() => {
+    if (!hasMountedFilterRef.current) {
+      hasMountedFilterRef.current = true;
+      return;
+    }
+    refreshScroll();
+    if (!gridRef.current) return;
+
+    const cards = gridRef.current.querySelectorAll<HTMLElement>('[data-stagger-item]');
+    if (!cards.length) return;
+
+    const mm = gsap.matchMedia();
+    mm.add(MM_CONDITIONS.motionOk, () => {
+      gsap.fromTo(
+        cards,
+        { autoAlpha: 0, y: 28, scale: 0.97, willChange: 'transform, opacity' },
+        {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.65,
+          stagger: 0.06,
+          ease: SCROLL_MOTION.revealEase,
+          clearProps: 'transform,willChange',
+        }
+      );
+    });
+
+    return () => mm.revert();
+  }, [filter, refreshScroll]);
 
   const filterTabs = [
     { id: 'all', label: 'All Portraits & Artifacts' },
@@ -25,10 +74,11 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ items }) => {
   });
 
   return (
-    <section className="relative py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-[#220B17] via-[#321122] to-[#1E0914] overflow-hidden text-white" id="gallery">
+    <section ref={sectionRef} className="relative py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-[#220B17] via-[#321122] to-[#1E0914] overflow-hidden text-white" id="gallery">
       {/* Royal Burgundy Magical Shimmer & Ambient Starlight */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-30 z-0"
+        data-parallax-y="26"
+        className="absolute inset-0 pointer-events-none opacity-30 z-0 will-change-transform"
         style={{
           background: 'radial-gradient(ellipse at 80% 20%, rgba(214, 179, 106, 0.25) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(180, 40, 70, 0.35) 0%, transparent 65%)',
         }}
@@ -48,23 +98,31 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ items }) => {
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="mb-10 sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-sm border border-[#D6B36A] bg-[#2E0E1F] shadow-[0_0_15px_rgba(214,179,106,0.2)] mb-3">
+          <div data-reveal className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-sm border border-[#D6B36A] bg-[#2E0E1F] shadow-[0_0_15px_rgba(214,179,106,0.2)] mb-3">
             <span className="w-2 h-2 rounded-full bg-[#FFE27A] shadow-[0_0_8px_#F3D58A]" />
             <span className="font-mono text-[11px] sm:text-xs text-[#F3D58A] tracking-[0.2em] uppercase font-bold">
               ✦ HOGWARTS GRAND STAIRCASE // ENCHANTED PORTRAITS ✦
             </span>
           </div>
 
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight">
-            Enchanted Moving <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D6B36A] via-[#F3D58A] to-[#D6B36A]">Portraits.</span>
-          </h2>
-          <p className="font-body text-xs sm:text-sm text-[#E2CCD4] mt-2">
+          <ScrollTextReveal
+            as="h2"
+            className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight"
+            segments={[
+              { text: 'Enchanted Moving' },
+              {
+                text: 'Portraits.',
+                className: 'text-transparent bg-clip-text bg-gradient-to-r from-[#D6B36A] via-[#F3D58A] to-[#D6B36A]',
+              },
+            ]}
+          />
+          <p data-reveal data-reveal-delay="0.12" className="font-body text-xs sm:text-sm text-[#E2CCD4] mt-2">
             Visual chronicles of innovation, engineering triumphs, and student prototypes from the archives.
           </p>
         </div>
 
         {/* Filter Chips */}
-        <div className="flex flex-wrap items-center gap-2.5 mb-8" role="group" aria-label="Filter gallery">
+        <div data-reveal data-reveal-delay="0.1" className="flex flex-wrap items-center gap-2.5 mb-8" role="group" aria-label="Filter gallery">
           {filterTabs.map((tab) => {
             const isSelected = filter === tab.id;
             return (
@@ -85,7 +143,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ items }) => {
         </div>
 
         {/* Archive Directive Note */}
-        <div className="p-4 sm:p-5 rounded-sm border-2 border-[#D6B36A]/50 bg-[#2D0F20] shadow-[0_8px_25px_rgba(0,0,0,0.6)] mb-10 flex items-center gap-3 font-body text-xs text-[#F4EBDD]">
+        <div data-reveal data-reveal-delay="0.14" className="p-4 sm:p-5 rounded-sm border-2 border-[#D6B36A]/50 bg-[#2D0F20] shadow-[0_8px_25px_rgba(0,0,0,0.6)] mb-10 flex items-center gap-3 font-body text-xs text-[#F4EBDD]">
           <Sparkles className="w-4 h-4 text-[#F3D58A] flex-shrink-0" />
           <div>
             <strong className="text-[#F3D58A] font-cinzel tracking-wider uppercase font-bold">PORTRAIT ARCHIVE DIRECTIVE:</strong> High-definition concept blueprints and hardware renders are displayed as visual previews until live festival photography is archived on 18–24 January 2027.
@@ -93,13 +151,15 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ items }) => {
         </div>
 
         {/* Grand Hogwarts Ornate Baroque Portrait Frames Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
-          {filteredItems.map((item, idx) => {
+        <div ref={gridRef} data-stagger-group data-stagger-step="0.1" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+          {filteredItems.map((item) => {
             return (
               <div
                 key={item.id}
+                data-stagger-item
+                data-parallax-frame
                 onClick={() => setActiveImage(item)}
-                className="group cursor-pointer rounded-sm overflow-hidden border-4 border-[#D6B36A] bg-[#260C1B] transition-all duration-300 shadow-[0_12px_40px_rgba(0,0,0,0.8),0_0_20px_rgba(214,179,106,0.25)] hover:shadow-[0_0_35px_rgba(243,213,138,0.5)] hover:-translate-y-1.5 flex flex-col justify-between relative"
+                className="group cursor-pointer rounded-sm overflow-hidden border-4 border-[#D6B36A] bg-[#260C1B] transition-all duration-300 shadow-[0_12px_40px_rgba(0,0,0,0.8),0_0_20px_rgba(214,179,106,0.25)] hover:shadow-[0_18px_48px_rgba(0,0,0,0.85),0_0_35px_rgba(243,213,138,0.5)] hover:-translate-y-1.5 flex flex-col justify-between relative"
               >
                 {/* Gilded Carved Corner Filigree Accent */}
                 <div className="absolute top-0 right-0 w-8 h-8 pointer-events-none z-10">
@@ -109,12 +169,14 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ items }) => {
                 </div>
 
                 <div className="relative h-48 sm:h-52 bg-[#12040C] overflow-hidden border-b-2 border-[#D6B36A]/40">
-                  <img
-                    src={item.image_url}
-                    alt={item.title}
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108 group-hover:brightness-105"
-                    loading="lazy"
-                  />
+                  <div data-parallax-y="12" data-parallax-scrub="1" className="w-full h-[116%] -mt-[8%] will-change-transform">
+                    <img
+                      src={item.image_url}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06] group-hover:brightness-105"
+                      loading="lazy"
+                    />
+                  </div>
 
                   {/* Corner Zoom Pill */}
                   <div className="absolute top-3 right-3 p-2 rounded-sm bg-[#1C0712] border border-[#D6B36A] text-[#F3D58A] opacity-0 group-hover:opacity-100 transition-opacity shadow-[0_0_10px_rgba(214,179,106,0.4)] z-20">
@@ -146,6 +208,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ items }) => {
       <AnimatePresence>
         {activeImage && (
           <div
+            data-lenis-prevent
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#12040B]/90 backdrop-blur-md"
             onClick={() => setActiveImage(null)}
           >

@@ -19,11 +19,11 @@ export const TechLoaderOverlay: React.FC = () => {
     // If reduced motion is preferred, close quickly
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setLoading(false);
+      window.dispatchEvent(new Event('tg:loader-complete'));
       return;
     }
 
     const startTime = Date.now();
-    const minLoadTime = 1800; // Allow visitor to experience the magical flying broomstick
     const maxLoadTime = 3200;
 
     const interval = setInterval(() => {
@@ -43,7 +43,10 @@ export const TechLoaderOverlay: React.FC = () => {
         setStage('TECH WIZARD 2027: ALOHOMORA!');
         setTimeout(() => {
           setBroomFlown(true);
-          setTimeout(() => setLoading(false), 500);
+          setTimeout(() => {
+            setLoading(false);
+            window.dispatchEvent(new Event('tg:loader-complete'));
+          }, 500);
         }, 400);
       }
     }, 40);

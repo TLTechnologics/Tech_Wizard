@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus } from 'lucide-react';
 import { FAQItem } from '../../types';
+import { useSectionChoreography } from '../../hooks/useSectionChoreography';
+import { useSmoothScroll } from '../../context/SmoothScrollContext';
+import { ScrollTextReveal } from '../common/ScrollTextReveal';
 
 interface FAQSectionProps {
   faqs: FAQItem[];
@@ -67,16 +70,22 @@ const DEFAULT_FAQS = [
 export const FAQSection: React.FC<FAQSectionProps> = ({ faqs }) => {
   const displayFaqs = faqs && faqs.length > 0 ? faqs : DEFAULT_FAQS;
   const [openId, setOpenId] = useState<string | null>(displayFaqs[0]?.id || 'f1');
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const { refreshScroll } = useSmoothScroll();
+
+  useSectionChoreography(sectionRef, { refreshKey: displayFaqs.length });
 
   const toggleFaq = (id: string) => {
     setOpenId(openId === id ? null : id);
+    window.setTimeout(() => refreshScroll(), 280);
   };
 
   return (
-    <section className="relative py-14 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-[#091712] via-[#10261E] to-[#07130F] overflow-hidden text-[#F4EBDD]" id="faq">
+    <section ref={sectionRef} className="relative py-14 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-[#091712] via-[#10261E] to-[#07130F] overflow-hidden text-[#F4EBDD]" id="faq">
       {/* Restricted Library Emerald Glow & Ancient Shadows */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-30 z-0"
+        data-parallax-y="22"
+        className="absolute inset-0 pointer-events-none opacity-30 z-0 will-change-transform"
         style={{
           background: 'radial-gradient(ellipse at 50% 15%, rgba(46, 196, 182, 0.25) 0%, transparent 65%), radial-gradient(ellipse at 80% 85%, rgba(186, 165, 116, 0.18) 0%, transparent 65%)',
         }}
@@ -96,23 +105,31 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ faqs }) => {
       <div className="relative z-10 max-w-5xl mx-auto">
         {/* Section Header */}
         <div className="mb-8 sm:mb-10 text-center sm:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm border-1.5 border-[#74C69D]/60 bg-[#0C2419] shadow-[0_0_15px_rgba(116,198,157,0.2),2px_2px_0px_#040B07] mb-2.5">
+          <div data-reveal className="inline-flex items-center gap-2 px-3 py-1 rounded-sm border-1.5 border-[#74C69D]/60 bg-[#0C2419] shadow-[0_0_15px_rgba(116,198,157,0.2),2px_2px_0px_#040B07] mb-2.5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#74C69D] shadow-[0_0_6px_#74C69D]" />
             <span className="font-mono text-[11px] sm:text-xs text-[#A7F3D0] tracking-widest uppercase font-bold">
               ✦ RESTRICTED LIBRARY // WIZARDING FAQ ARCHIVE ✦
             </span>
           </div>
 
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight">
-            Frequently Asked <span className="text-[#A7F3D0] underline decoration-[#2D6A53] decoration-wavy decoration-2">Questions.</span>
-          </h2>
-          <p className="font-body text-xs sm:text-sm text-[#B8D8C9] mt-2 max-w-2xl">
+          <ScrollTextReveal
+            as="h2"
+            className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight"
+            segments={[
+              { text: 'Frequently Asked' },
+              {
+                text: 'Questions.',
+                className: 'text-[#A7F3D0] underline decoration-[#2D6A53] decoration-wavy decoration-2',
+              },
+            ]}
+          />
+          <p data-reveal data-reveal-delay="0.12" className="font-body text-xs sm:text-sm text-[#B8D8C9] mt-2 max-w-2xl">
             Whispered answers from the ancient tomes. Everything you need to know about attendance eligibility, hardware and software exhibits, rules, and entry passes.
           </p>
         </div>
 
         {/* Grimoire Accordions */}
-        <div className="space-y-3">
+        <div data-stagger-group data-stagger-step="0.06" data-stagger-y="36" className="space-y-3">
           {displayFaqs.map((faq, idx) => {
             const currentId = faq.id || `faq-${idx}`;
             const isOpen = openId === currentId;
@@ -120,6 +137,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ faqs }) => {
             return (
               <div
                 key={currentId}
+                data-stagger-item
                 className={`rounded-sm border-2 transition-all duration-200 overflow-hidden ${
                   isOpen
                     ? 'bg-[#0E281D] border-[#74C69D] shadow-[0_0_20px_rgba(116,198,157,0.25),3.5px_3.5px_0px_#040B07]'

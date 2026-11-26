@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ProjectRecord } from '../../types';
 import { InfiniteCardsMarquee } from '../common/InfiniteCardsMarquee';
 import { Cpu, Code2, ArrowUpRight } from 'lucide-react';
+import { useSectionChoreography } from '../../hooks/useSectionChoreography';
+import { useSmoothScroll } from '../../context/SmoothScrollContext';
+import { ScrollTextReveal } from '../common/ScrollTextReveal';
+import { gsap, MM_CONDITIONS, SCROLL_MOTION } from '../../lib/gsap';
 
 interface TechShowcaseSectionProps {
   projects: ProjectRecord[];
@@ -174,6 +178,38 @@ export const TechShowcaseSection: React.FC<TechShowcaseSectionProps> = ({
   projects,
 }) => {
   const [filter, setFilter] = useState<'all' | 'hw' | 'sw'>('all');
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const filteredGridRef = useRef<HTMLDivElement | null>(null);
+  const { refreshScroll } = useSmoothScroll();
+
+  useSectionChoreography(sectionRef, { refreshKey: projects.length });
+
+  useEffect(() => {
+    refreshScroll();
+    if (filter === 'all' || !filteredGridRef.current) return;
+
+    const cards = filteredGridRef.current.querySelectorAll<HTMLElement>('.plate');
+    if (!cards.length) return;
+
+    const mm = gsap.matchMedia();
+    mm.add(MM_CONDITIONS.motionOk, () => {
+      gsap.fromTo(
+        cards,
+        { autoAlpha: 0, y: 30, scale: 0.96, willChange: 'transform, opacity' },
+        {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.72,
+          stagger: 0.07,
+          ease: SCROLL_MOTION.revealEase,
+          clearProps: 'transform,willChange',
+        }
+      );
+    });
+
+    return () => mm.revert();
+  }, [filter, refreshScroll]);
 
   const filteredStatic = STATIC_PLATES.filter((p) => {
     if (filter === 'all') return true;
@@ -288,10 +324,11 @@ export const TechShowcaseSection: React.FC<TechShowcaseSectionProps> = ({
   ];
 
   return (
-    <section className="relative py-14 sm:py-16 md:py-20 bg-gradient-to-b from-[#0A1326] via-[#111E3B] to-[#070D1B] overflow-hidden text-[#F4EBDD]" id="showcase">
+    <section ref={sectionRef} className="relative py-14 sm:py-16 md:py-20 bg-gradient-to-b from-[#0A1326] via-[#111E3B] to-[#070D1B] overflow-hidden text-[#F4EBDD]" id="showcase">
       {/* Ravenclaw Chamber of Inventions Blue & Bronze Ambient Glow */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-35 z-0"
+        data-parallax-y="26"
+        className="absolute inset-0 pointer-events-none opacity-35 z-0 will-change-transform"
         style={{
           background: 'radial-gradient(ellipse at 70% 25%, rgba(59, 130, 246, 0.35) 0%, transparent 60%), radial-gradient(ellipse at 25% 75%, rgba(214, 179, 106, 0.25) 0%, transparent 65%)',
         }}
@@ -299,7 +336,8 @@ export const TechShowcaseSection: React.FC<TechShowcaseSectionProps> = ({
       />
       {/* Background Architectural Constellation Grid */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.035] z-0"
+        data-parallax-y="-18"
+        className="absolute inset-0 pointer-events-none opacity-[0.035] z-0 will-change-transform"
         style={{
           backgroundImage:
             'linear-gradient(#D6B36A 1px, transparent 1px), linear-gradient(90deg, #D6B36A 1px, transparent 1px)',
@@ -310,19 +348,27 @@ export const TechShowcaseSection: React.FC<TechShowcaseSectionProps> = ({
 
       <div className="wrap max-w-7xl mx-auto px-4 sm:px-6 md:px-8 relative z-10">
         <div className="mb-6 sm:mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm border-1.5 border-[#D6B36A] bg-[#1A1626] shadow-[0_0_12px_rgba(214,179,106,0.15),2px_2px_0px_#100D18] mb-2.5">
+          <div data-reveal className="inline-flex items-center gap-2 px-3 py-1 rounded-sm border-1.5 border-[#D6B36A] bg-[#1A1626] shadow-[0_0_12px_rgba(214,179,106,0.15),2px_2px_0px_#100D18] mb-2.5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#D6B36A] shadow-[0_0_6px_#D6B36A]" />
             <span className="font-mono text-[11px] sm:text-xs text-[#F3D58A] tracking-widest uppercase font-bold">
               CHAMBER OF MAGICAL INVENTIONS // NATIONAL PAVILION
             </span>
           </div>
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight">
-            Flagship Innovation <span className="text-[#D6B36A] underline decoration-[#762E42] decoration-wavy decoration-2">Showcase.</span>
-          </h2>
+          <ScrollTextReveal
+            as="h2"
+            className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight"
+            segments={[
+              { text: 'Flagship Innovation' },
+              {
+                text: 'Showcase.',
+                className: 'text-[#D6B36A] underline decoration-[#762E42] decoration-wavy decoration-2',
+              },
+            ]}
+          />
         </div>
 
         {/* Action Header Strip */}
-        <div className="flex justify-between items-center flex-wrap gap-4 mb-6">
+        <div data-reveal data-reveal-delay="0.08" className="flex justify-between items-center flex-wrap gap-4 mb-6">
           {/* Filter Chips */}
           <div className="filters" role="group" aria-label="Filter projects" style={{ marginBottom: 0 }}>
             <button
@@ -357,27 +403,29 @@ export const TechShowcaseSection: React.FC<TechShowcaseSectionProps> = ({
         </div>
 
         {/* Official Banner Note */}
-        <div className="p-4 rounded-sm border-2 border-[#D6B36A]/60 bg-gradient-to-r from-[#0F1C38] via-[#142347] to-[#0F1C38] shadow-[0_8px_30px_rgba(0,0,0,0.6),3px_3px_0px_#060B17] mb-8 font-mono text-xs text-[#F4EBDD] font-medium">
+        <div data-reveal data-reveal-delay="0.12" className="p-4 rounded-sm border-2 border-[#D6B36A]/60 bg-gradient-to-r from-[#0F1C38] via-[#142347] to-[#0F1C38] shadow-[0_8px_30px_rgba(0,0,0,0.6),3px_3px_0px_#060B17] mb-8 font-mono text-xs text-[#F4EBDD] font-medium">
           “Students from all external and host colleges are welcome to exhibit their hardware and software projects. Register below with a Project Showcasing pass to unlock your project submission upon admin review.”
         </div>
 
         {/* Card Collections: 2-Row Infinite Marquee on 'All' / Filtered Grid on Specific Selection */}
         {filter === 'all' ? (
-          <InfiniteCardsMarquee
-            row1Cards={hwCards}
-            row2Cards={swCards}
-            speedSeconds={40}
-          />
+          <div data-reveal>
+            <InfiniteCardsMarquee
+              row1Cards={hwCards}
+              row2Cards={swCards}
+              speedSeconds={40}
+            />
+          </div>
         ) : (
-          <div className="plates">
+          <div ref={filteredGridRef} className="plates">
             {filteredStatic.map((plate, idx) => renderPlateCard(plate, idx))}
             {filteredDynamic.map((project, idx) => renderDynamicCard(project, idx, idx + filteredStatic.length))}
           </div>
         )}
 
         {/* Disciplines Specification Breakdown: Technical Spec Dossiers */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-10 pt-8 border-t-2 border-dashed border-[#D6B36A]/25">
-          <div className="p-5 sm:p-6 rounded-sm border-2 border-[#D6B36A]/50 bg-gradient-to-b from-[#0F1C38] to-[#091224] shadow-[0_8px_30px_rgba(0,0,0,0.6),3.5px_3.5px_0px_#060B17]">
+        <div data-stagger-group data-stagger-step="0.12" className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-10 pt-8 border-t-2 border-dashed border-[#D6B36A]/25">
+          <div data-stagger-item className="p-5 sm:p-6 rounded-sm border-2 border-[#D6B36A]/50 bg-gradient-to-b from-[#0F1C38] to-[#091224] shadow-[0_8px_30px_rgba(0,0,0,0.6),3.5px_3.5px_0px_#060B17]">
             <div className="flex items-center gap-3 mb-3.5">
               <div className="p-2 rounded-sm border-1.5 border-[#D6B36A] bg-[#162952] shadow-[0_0_8px_rgba(96,165,250,0.3)]">
                 <Cpu className="w-4 h-4 text-[#93C5FD]" />
@@ -397,7 +445,7 @@ export const TechShowcaseSection: React.FC<TechShowcaseSectionProps> = ({
             </ul>
           </div>
 
-          <div className="p-5 sm:p-6 rounded-sm border-2 border-[#D6B36A]/50 bg-gradient-to-b from-[#0F1C38] to-[#091224] shadow-[0_8px_30px_rgba(0,0,0,0.6),3.5px_3.5px_0px_#060B17]">
+          <div data-stagger-item className="p-5 sm:p-6 rounded-sm border-2 border-[#D6B36A]/50 bg-gradient-to-b from-[#0F1C38] to-[#091224] shadow-[0_8px_30px_rgba(0,0,0,0.6),3.5px_3.5px_0px_#060B17]">
             <div className="flex items-center gap-3 mb-3.5">
               <div className="p-2 rounded-sm border-1.5 border-[#D6B36A] bg-[#162952] shadow-[0_0_8px_rgba(96,165,250,0.3)]">
                 <Code2 className="w-4 h-4 text-[#93C5FD]" />

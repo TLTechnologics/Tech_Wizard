@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { api } from '../../services/api';
 import { EventItem, RegistrationPayload, RegistrationRecord } from '../../types';
 import { RegistrationConfirmation } from './RegistrationConfirmation';
 import { useNotification } from '../../context/NotificationContext';
 import { GlassSelect } from '../common/GlassSelect';
 import { MapPin } from 'lucide-react';
+import { useSectionChoreography } from '../../hooks/useSectionChoreography';
+import { ScrollTextReveal } from '../common/ScrollTextReveal';
 
 const YEAR_SEMESTER_OPTIONS = [
   '1st Year / Semester 1',
@@ -30,6 +32,8 @@ export const RegistrationSection: React.FC<RegistrationSectionProps> = ({
   onOpenSubmission,
 }) => {
   const { showNotification } = useNotification();
+  const sectionRef = useRef<HTMLElement | null>(null);
+  useSectionChoreography(sectionRef);
   // Strictly 2 types of registrations: 'visitor' and 'showcasing' (Both 100% Free)
   const [selectedPass, setSelectedPass] = useState<'visitor' | 'showcasing'>('visitor');
   const [selectedEventId, setSelectedEventId] = useState<string>('');
@@ -212,10 +216,11 @@ export const RegistrationSection: React.FC<RegistrationSectionProps> = ({
   };
 
   return (
-    <section className="relative py-14 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-[#1A0B14] via-[#2A1020] to-[#160812] overflow-hidden" id="register">
+    <section ref={sectionRef} className="relative py-14 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-[#1A0B14] via-[#2A1020] to-[#160812] overflow-hidden" id="register">
       {/* Hogwarts Admission Burgundy Glow & Constellation */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-30 z-0"
+        data-parallax-y="24"
+        className="absolute inset-0 pointer-events-none opacity-30 z-0 will-change-transform"
         style={{
           background: 'radial-gradient(ellipse at 30% 20%, rgba(180, 40, 70, 0.4) 0%, transparent 60%), radial-gradient(ellipse at 75% 75%, rgba(214, 179, 106, 0.25) 0%, transparent 65%)',
         }}
@@ -235,16 +240,24 @@ export const RegistrationSection: React.FC<RegistrationSectionProps> = ({
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="mb-8 sm:mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm border-1.5 border-[#D6B36A] bg-[#2C0E20] shadow-[0_0_15px_rgba(214,179,106,0.2),2px_2px_0px_#10050C] mb-2.5">
+          <div data-reveal className="inline-flex items-center gap-2 px-3 py-1 rounded-sm border-1.5 border-[#D6B36A] bg-[#2C0E20] shadow-[0_0_15px_rgba(214,179,106,0.2),2px_2px_0px_#10050C] mb-2.5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#E63946] shadow-[0_0_6px_#FF5470]" />
             <span className="font-mono text-[11px] sm:text-xs text-[#F3D58A] tracking-widest uppercase font-bold">
               ✦ HOGWARTS ADMISSION // 100% FREE PASSES ✦
             </span>
           </div>
 
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight">
-            Reserve Your <span className="text-[#F3D58A] underline decoration-[#E63946] decoration-wavy decoration-2">Place.</span>
-          </h2>
+          <ScrollTextReveal
+            as="h2"
+            className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight"
+            segments={[
+              { text: 'Reserve Your' },
+              {
+                text: 'Place.',
+                className: 'text-[#F3D58A] underline decoration-[#E63946] decoration-wavy decoration-2',
+              },
+            ]}
+          />
         </div>
 
         {confirmedRegistration ? (
@@ -259,7 +272,7 @@ export const RegistrationSection: React.FC<RegistrationSectionProps> = ({
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
             {/* Left Column: Choose Pass Tier & Guidance (Enchanted Pass Cards) */}
-            <div className="lg:col-span-5 flex flex-col gap-4 sm:gap-5">
+            <div data-reveal data-reveal-delay="0.04" className="lg:col-span-5 flex flex-col gap-4 sm:gap-5">
               <div>
                 <h3 className="font-cinzel text-xl font-bold text-[#F4EBDD] mb-1.5 tracking-wide">
                   Select Your Festival Pass
@@ -362,7 +375,7 @@ export const RegistrationSection: React.FC<RegistrationSectionProps> = ({
             </div>
 
             {/* Right Column: Registration Form in Pure Enchanted Parchment Dossier */}
-            <form onSubmit={handleSubmit} noValidate className="lg:col-span-7 rounded-sm border-2 border-[#D6B36A] bg-[#240C1B] p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.7),4px_4px_0px_#10050C] relative">
+            <form data-reveal data-reveal-delay="0.14" onSubmit={handleSubmit} noValidate className="lg:col-span-7 rounded-sm border-2 border-[#D6B36A] bg-[#240C1B] p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.7),4px_4px_0px_#10050C] relative">
               {/* Crimson Wax Seal Ribbon */}
               <div
                 className="absolute -top-3.5 right-12 px-4 py-1 bg-gradient-to-r from-[#762E42] to-[#4A1525] border-x border-b border-[#D6B36A] shadow-[0_2px_8px_rgba(0,0,0,0.6)] z-10 flex items-center gap-1.5"

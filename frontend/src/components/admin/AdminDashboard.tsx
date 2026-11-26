@@ -69,7 +69,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-dark-950/95 backdrop-blur-xl flex flex-col overflow-hidden text-neutral-100">
+    <div data-lenis-prevent className="fixed inset-0 z-50 bg-dark-950/95 backdrop-blur-xl flex flex-col overflow-hidden text-neutral-100">
       {/* Top Navigation Bar */}
       <header className="bg-dark-900 border-b border-neutral-800 px-4 sm:px-6 py-3.5 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">

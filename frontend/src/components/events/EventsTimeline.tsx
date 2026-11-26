@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { EventItem } from '../../types';
 import { EventDetailModal } from './EventDetailModal';
 import { EventCard } from './EventCard';
 import { Terminal, Code2, Cpu } from 'lucide-react';
+import { useSectionChoreography } from '../../hooks/useSectionChoreography';
+import { useSmoothScroll } from '../../context/SmoothScrollContext';
+import { ScrollTextReveal } from '../common/ScrollTextReveal';
 
 interface EventsTimelineProps {
   events: EventItem[];
@@ -16,6 +19,18 @@ export const EventsTimeline: React.FC<EventsTimelineProps> = ({
   onSelectShowcase,
 }) => {
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const { stopScroll, startScroll } = useSmoothScroll();
+
+  useSectionChoreography(sectionRef, { refreshKey: events.length });
+
+  useEffect(() => {
+    if (selectedEvent) {
+      stopScroll();
+    } else {
+      startScroll();
+    }
+  }, [selectedEvent, stopScroll, startScroll]);
 
   const tracks = [
     {
@@ -54,10 +69,11 @@ export const EventsTimeline: React.FC<EventsTimelineProps> = ({
   ];
 
   return (
-    <section className="relative py-14 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-[#200A12] via-[#2F0E1A] to-[#1E0810] overflow-hidden text-[#F4EBDD]" id="events">
+    <section ref={sectionRef} className="relative py-14 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 bg-gradient-to-b from-[#200A12] via-[#2F0E1A] to-[#1E0810] overflow-hidden text-[#F4EBDD]" id="events">
       {/* Gryffindor Challenge Arena Fire Glow & Constellation */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-30 z-0"
+        data-parallax-y="26"
+        className="absolute inset-0 pointer-events-none opacity-30 z-0 will-change-transform"
         style={{
           background: 'radial-gradient(ellipse at 20% 25%, rgba(180, 40, 70, 0.45) 0%, transparent 60%), radial-gradient(ellipse at 80% 75%, rgba(214, 179, 106, 0.25) 0%, transparent 65%)',
         }}
@@ -65,7 +81,7 @@ export const EventsTimeline: React.FC<EventsTimelineProps> = ({
       />
 
       {/* Floating Golden Sparks / Ember Particles */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+      <div data-parallax-y="-22" className="absolute inset-0 pointer-events-none z-0 overflow-hidden will-change-transform" aria-hidden="true">
         {[...Array(14)].map((_, i) => (
           <div
             key={i}
@@ -95,26 +111,35 @@ export const EventsTimeline: React.FC<EventsTimelineProps> = ({
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="mb-8 sm:mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm border-1.5 border-[#D6B36A] bg-[#2E0F1B] shadow-[0_0_15px_rgba(230,57,70,0.3),2px_2px_0px_#14050B] mb-2.5">
+          <div data-reveal className="inline-flex items-center gap-2 px-3 py-1 rounded-sm border-1.5 border-[#D6B36A] bg-[#2E0F1B] shadow-[0_0_15px_rgba(230,57,70,0.3),2px_2px_0px_#14050B] mb-2.5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#E63946] shadow-[0_0_8px_#FF5470]" />
             <span className="font-mono text-[11px] sm:text-xs text-[#F3D58A] tracking-widest uppercase font-bold">
               ✦ GRYFFINDOR CHALLENGE ARENA // 3 CORE TRACKS ✦
             </span>
           </div>
 
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight">
-            Learn. Build. <span className="text-[#F3D58A] underline decoration-[#E63946] decoration-wavy decoration-2">Showcase.</span>
-          </h2>
-          <p className="font-body text-xs sm:text-sm text-[#E2CCD4] mt-2 max-w-2xl leading-relaxed">
+          <ScrollTextReveal
+            as="h2"
+            className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-[#F4EBDD] tracking-tight leading-tight"
+            segments={[
+              { text: 'Learn. Build.' },
+              {
+                text: 'Showcase.',
+                className: 'text-[#F3D58A] underline decoration-[#E63946] decoration-wavy decoration-2',
+              },
+            ]}
+          />
+          <p data-reveal data-reveal-delay="0.12" className="font-body text-xs sm:text-sm text-[#E2CCD4] mt-2 max-w-2xl leading-relaxed">
             Enter the trial grounds of bravery and innovation. Three interconnected paths engineered for hands-on mastery, rapid prototyping sprints, and national demonstration.
           </p>
         </div>
 
         {/* 3 Main Track Hero Cards: Grimoire Placards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12 sm:mb-14">
+        <div data-stagger-group data-stagger-step="0.11" className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12 sm:mb-14">
           {tracks.map((t, idx) => (
             <div
               key={idx}
+              data-stagger-item
               className="p-5 sm:p-6 rounded-sm border-2 border-[#D6B36A]/60 bg-gradient-to-b from-[#2A0E18] to-[#1C0911] shadow-[0_8px_30px_rgba(0,0,0,0.65),3.5px_3.5px_0px_#12040A] hover:border-[#F3D58A] hover:shadow-[0_0_25px_rgba(214,179,106,0.35),5px_5px_0px_#12040A] hover:-translate-y-0.5 flex flex-col justify-between transition-all duration-200 relative"
             >
               <div>
@@ -167,27 +192,30 @@ export const EventsTimeline: React.FC<EventsTimelineProps> = ({
         <div>
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
             <div>
-              <span className="font-mono text-xs text-[#F3D58A] tracking-wider uppercase font-bold flex items-center gap-1.5">
+              <span data-reveal className="font-mono text-xs text-[#F3D58A] tracking-wider uppercase font-bold flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#E63946] shadow-[0_0_6px_#FF5470]" />
                 CHRONOLOGICAL RUNTIME // 18–24 JANUARY 2027
               </span>
-              <h3 className="font-display text-xl sm:text-2xl md:text-3xl font-black text-[#F4EBDD] mt-0.5">
-                The 8 Official Festival Events
-              </h3>
+              <ScrollTextReveal
+                as="h3"
+                className="font-display text-xl sm:text-2xl md:text-3xl font-black text-[#F4EBDD] mt-0.5"
+                segments={[{ text: 'The 8 Official Festival Events' }]}
+              />
             </div>
-            <span className="font-mono text-xs font-bold text-[#F3D58A] px-3 py-1.5 bg-[#2B0E1B] border-2 border-[#D6B36A] shadow-[2px_2px_0px_#12040A] rounded-sm">
+            <span data-reveal data-reveal-delay="0.1" className="font-mono text-xs font-bold text-[#F3D58A] px-3 py-1.5 bg-[#2B0E1B] border-2 border-[#D6B36A] shadow-[2px_2px_0px_#12040A] rounded-sm">
               CLICK ANY EVENT TO INSPECT RULES &amp; VENUE
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          <div data-stagger-group data-stagger-step="0.08" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {events.map((ev) => (
-              <EventCard
-                key={ev.id}
-                event={ev}
-                onViewDetails={(item) => setSelectedEvent(item)}
-                onRegister={(eventId) => onSelectRegister(eventId)}
-              />
+              <div key={ev.id} data-stagger-item className="flex">
+                <EventCard
+                  event={ev}
+                  onViewDetails={(item) => setSelectedEvent(item)}
+                  onRegister={(eventId) => onSelectRegister(eventId)}
+                />
+              </div>
             ))}
           </div>
         </div>

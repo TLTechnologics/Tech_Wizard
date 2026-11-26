@@ -133,7 +133,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onViewDetails }) =>
         background: theme.bg,
         borderColor: theme.border,
       }}
-      className="relative rounded-sm border-2 shadow-[0_12px_36px_rgba(0,0,0,0.7)] hover:shadow-[0_0_28px_rgba(214,179,106,0.3)] hover:-translate-y-1 transition-all duration-300 p-5 sm:p-5.5 flex flex-col justify-between overflow-hidden group cursor-pointer"
+      className="relative w-full rounded-sm border-2 shadow-[0_12px_36px_rgba(0,0,0,0.7)] hover:shadow-[0_0_28px_rgba(214,179,106,0.3)] hover:-translate-y-1 transition-all duration-300 p-5 sm:p-5.5 flex flex-col justify-between overflow-hidden group cursor-pointer"
       onClick={() => onViewDetails(event)}
     >
       {/* Background Crest Watermark */}

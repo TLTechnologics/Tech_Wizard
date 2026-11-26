@@ -83,7 +83,7 @@
 
 html {
   scroll-padding-top: calc(68px + env(safe-area-inset-top, 0px));
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   background-color: var(--bg);
 }
 
@@ -97,7 +97,7 @@ body {
   color: var(--ink);
   font: 400 1rem/1.55 var(--b);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-x: clip;
   position: relative;
   background-image: 
     radial-gradient(rgba(243, 213, 138, 0.04) 1px, transparent 1px),
@@ -480,7 +480,8 @@ header {
   right: 0;
   height: 3px;
   background: linear-gradient(90deg, #D6B36A, #762E42, #F3D58A);
-  transition: width 0.1s ease-out;
+  transform-origin: left center;
+  will-change: transform;
   z-index: 52;
 }
 
@@ -688,6 +689,10 @@ section {
     0 16px 36px rgba(0, 0, 0, 0.65),
     0 0 20px rgba(214, 179, 106, 0.25),
     5px 5px 0px #D6B36A;
+}
+
+.plate:hover .art svg {
+  transform: scale(1.06);
 }
 
 .art {
